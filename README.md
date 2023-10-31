@@ -36,12 +36,12 @@ $ copy example.env .env
 Por padrão, a aplicação rodará na porta 3000.
 
 ```bash
-# development
+# modo de desenvolvimento
 $ npm run start
 
-# watch mode
+# atualiza a cada mudança nos arquivos
 $ npm run dev
 
-# production mode
+# modo de produção
 $ npm run prod
 ```
