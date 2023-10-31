@@ -20,6 +20,17 @@ Base de desenvolvimento backend de SMUL/ATIC:
 $ npm install
 ```
 
+## Configurando o banco de dados
+
+O arquivo example.env detalha as variáveis de ambiente necessárias pra rodar a aplicação, a partir dela é necessário criar um arquivo .env com as informações corretas (URL do banco de dados, etc).
+
+NUNCA ENVIE O ARQUIVO .env PARA O REPOSITÓRIO.
+
+```bash
+# cria arquivo .env com base no exemplo
+$ copy example.env .env
+```
+
 ## Rodando a aplicação
 
 Por padrão, a aplicação rodará na porta 3000.
