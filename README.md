@@ -38,10 +38,12 @@ Por padrão, a aplicação rodará na porta 3000.
 ```bash
 # modo de desenvolvimento
 $ npm run start
-
+```
+```bash
 # atualiza a cada mudança nos arquivos
 $ npm run dev
-
+```
+```bash
 # modo de produção
 $ npm run prod
 ```
