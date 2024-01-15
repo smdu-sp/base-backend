@@ -9,3 +9,28 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+enum Permissao {
+  DEV
+  SUP
+  ADM
+  USR
+}
+
+enum Status {
+  ATIVO
+  INATIVO
+}
+
+model Usuario {
+  id            String      @id @default(uuid())
+  login         String      @unique
+  permissao     Permissao   @default(USR)
+  status        Status      @default(ATIVO)
+
+  ultimologin   DateTime?   @default(now())
+  criadoEm      DateTime    @default(now())
+  atualizadoEm  DateTime    @updatedAt
+
+  @@map("usuarios")
+}
