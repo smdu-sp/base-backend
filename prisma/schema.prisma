@@ -10,7 +10,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-<<<<<<< HEAD
 enum Permissao {
   DEV
   SUP
@@ -34,23 +33,4 @@ model Usuario {
   atualizadoEm  DateTime    @updatedAt
 
   @@map("usuarios")
-=======
-model Usuario {
-  id            String    @id @default(uuid())
-  login         String    @unique
-  ultimoLogin   DateTime  @default(now())
-  criadoEm      DateTime  @default(now())
-  atualizadoEm  DateTime  @updatedAt
-
-  @@map("usuarios")
-}
-
-model Permissao {
-  id            String    @id @default(uuid())
-  nome          String    @unique
-  criadoEm      DateTime  @default(now())
-  atualizadoEm  DateTime  @updatedAt
-
-  @@map("permissoes")
->>>>>>> b6fb7d4c7527d63349ac555e8ab3dcd556430eac
 }
