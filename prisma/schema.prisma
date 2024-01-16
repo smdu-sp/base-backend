@@ -29,7 +29,7 @@ model Usuario {
   permissao     Permissao   @default(USR)
   status        Status      @default(ATIVO)
 
-  ultimologin   DateTime?   @default(now())
+  ultimologin   DateTime    @default(now())
   criadoEm      DateTime    @default(now())
   atualizadoEm  DateTime    @updatedAt
 

@@ -26,6 +26,8 @@ O arquivo example.env detalha as variáveis de ambiente necessárias pra rodar a
 
 <b>NUNCA ENVIE O ARQUIVO .env PARA O REPOSITÓRIO.</b>
 
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+
 ```bash
 # cria arquivo .env com base no exemplo
 $ copy example.env .env
