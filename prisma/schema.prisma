@@ -24,6 +24,7 @@ enum Status {
 
 model Usuario {
   id            String      @id @default(uuid())
+  nome          String
   login         String      @unique
   permissao     Permissao   @default(USR)
   status        Status      @default(ATIVO)

@@ -1,5 +1,5 @@
 export interface UsuarioJwt {
     id: string;
-    email: string;
+    login: string;
     nome: string;
 }

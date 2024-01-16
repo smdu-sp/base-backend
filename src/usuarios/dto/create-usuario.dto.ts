@@ -6,19 +6,13 @@ export class CreateUsuarioDto {
     @IsString({ message: "Tem de ser texto."})
     nome: string
 
-    @IsEmail({}, { message: "E-mail inválido!"})
-    email: string
-
-    @MinLength(6, { message: "Senha tem de ter ao menos 10 caracteres."})
-    @IsString({ message: "Tem de ser texto."})
-    @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-      message: 'Senha muito fraca.',
-    })
-    senha: string
+    @IsString({ message: "Login inválido!"})
+    @MinLength(7, { message: "Login tem de ter ao menos 7 caracteres."})
+    login: string
 
     @IsEnum($Enums.Permissao, { message: "Escolha uma permissão válida."})
     permissao?: $Enums.Permissao
 
-    @IsBoolean({ message: "Status pode ser verdadeiro ou falso."})
-    status?: boolean
+    @IsEnum($Enums.Status, { message: "Escolha um status válido."})
+    status?: $Enums.Status
 }

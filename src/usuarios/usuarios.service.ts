@@ -2,7 +2,6 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import * as argon from 'argon2';
 import { Permissao, Usuario } from '@prisma/client';
 
 @Injectable()
@@ -26,30 +25,17 @@ export class UsuariosService {
   }
 
   async criar(usuario: Usuario, createUsuarioDto: CreateUsuarioDto) {
-    let { nome, email, senha, permissao, status } = createUsuarioDto;
-    const hash = await argon.hash(senha);
+    let { nome, login, permissao, status } = createUsuarioDto;
     permissao = await this.validaPermissaoCriador(usuario, permissao);
-    if (await this.buscarPorEmail(email)) throw new ForbiddenException("E-mail já cadastrado.");
+    if (await this.buscarPorLogin(login)) throw new ForbiddenException("Login já cadastrado.");
     const novoUsuario = await this.prisma.usuario.create({
-      data: { nome, email, senha: hash, permissao, status }
+      data: { nome, login, permissao, status }
     });
-    novoUsuario.senha = undefined;
     return novoUsuario;
   }
 
   async buscarTudo() {
-    const usuarios = await this.prisma.usuario.findMany({
-      select: {
-        id: true,
-        nome: true,
-        email: true,
-        permissao: true,
-        status: true,
-        criadoEm: true,
-        atualizadoEm: true,
-        senha: false
-      }
-    });
+    const usuarios = await this.prisma.usuario.findMany();
     return usuarios;
   }
 
@@ -57,23 +43,20 @@ export class UsuariosService {
     const usuario = await this.prisma.usuario.findUnique({
       where: { id }
     });
-    usuario.senha = undefined;
     return usuario;
   }
 
-  async buscarPorEmail(email: string) {
+  async buscarPorLogin(login: string) {
     const usuario = await this.prisma.usuario.findUnique({
-      where: { email }
+      where: { login }
     });
     return usuario;
   }
 
   async atualizar (usuario: Usuario, id: string, updateUsuarioDto: UpdateUsuarioDto) {
-    if (updateUsuarioDto.senha)
-      updateUsuarioDto.senha = await argon.hash(updateUsuarioDto.senha);
-    if (updateUsuarioDto.email) {
-      const usuario = await this.buscarPorEmail(updateUsuarioDto.email);
-      if (usuario && usuario.id !== id) throw new ForbiddenException("E-mail já cadastrado.");
+    if (updateUsuarioDto.login) {
+      const usuario = await this.buscarPorLogin(updateUsuarioDto.login);
+      if (usuario && usuario.id !== id) throw new ForbiddenException("Login já cadastrado.");
     }
     if (updateUsuarioDto.permissao)
       updateUsuarioDto.permissao = await this.validaPermissaoCriador(usuario, updateUsuarioDto.permissao);
@@ -81,7 +64,6 @@ export class UsuariosService {
       data: updateUsuarioDto,
       where: { id }
     });
-    usuarioAtualizado.senha = undefined;
     return usuarioAtualizado;
   }
   

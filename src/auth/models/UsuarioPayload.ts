@@ -1,6 +1,6 @@
 export interface UsuarioPayload {
     sub: string;
-    email: string;
+    login: string;
     nome: string;
     iat?: number;
     exp?: number;

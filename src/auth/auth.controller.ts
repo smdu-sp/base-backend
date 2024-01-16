@@ -17,7 +17,7 @@ export class AuthController {
   login(@Request() req: AuthRequest) {
     return this.authService.login(req.user);
   }
-
+  
   @Get('eu')
   usuarioAtual(@UsuarioAtual() usuario: Usuario) {
     return usuario;

@@ -1,8 +1,8 @@
-import { IsEmail, IsString } from 'class-validator';
+import { IsEmail, IsString, Length } from 'class-validator';
 
 export class LoginRequestBody {
-  @IsEmail({}, { message: "Email inválido." })
-  email: string;
+  @IsString({ message: "O login precisa ser um texto." })
+  login: string;
 
   @IsString({ message: "A senha precisa ser um texto." })
   senha: string;
