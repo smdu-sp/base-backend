@@ -16,6 +16,7 @@ export class UsuariosService {
   }
 
   async validaPermissaoCriador(usuario: Usuario, permissao: Permissao) {
+    if (!usuario) return 'USR';
     const permissaoCriador = await this.retornaPermissao(usuario.id);
     if (permissaoCriador == 'ADM' && (permissao == 'SUP' || permissao == 'DEV'))
       permissao = 'ADM';

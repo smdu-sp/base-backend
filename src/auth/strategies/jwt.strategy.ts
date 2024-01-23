@@ -3,10 +3,14 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UsuarioPayload } from '../models/UsuarioPayload';
 import { UsuarioJwt } from '../models/UsuarioJwt';
+import { UsuariosService } from 'src/usuarios/usuarios.service';
+import { Usuario } from '@prisma/client';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+  constructor(
+    private usuariosService: UsuariosService
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -14,11 +18,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: UsuarioPayload): Promise<UsuarioJwt> {
-    return {
-      id: payload.sub,
-      login: payload.login,
-      nome: payload.nome
-    };
+  async validate(payload: UsuarioPayload): Promise<Usuario> {
+    const usuario = await this.usuariosService.buscarPorId(payload.sub);
+    if (!usuario) throw new Error('Usuário não encontrado');
+    return usuario;
   }
 }
