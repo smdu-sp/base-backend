@@ -2,15 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UsuarioPayload } from '../models/UsuarioPayload';
-import { UsuarioJwt } from '../models/UsuarioJwt';
 import { UsuariosService } from 'src/usuarios/usuarios.service';
 import { Usuario } from '@prisma/client';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(
-    private usuariosService: UsuariosService
-  ) {
+  constructor(private usuariosService: UsuariosService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,

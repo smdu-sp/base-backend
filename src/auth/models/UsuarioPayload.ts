@@ -1,8 +1,10 @@
 export interface UsuarioPayload {
-    sub: string;
-    login: string;
-    nome: string;
-    permissao: string;
-    iat?: number;
-    exp?: number;
+  sub: string;
+  login: string;
+  email: string;
+  nome: string;
+  permissao: string;
+  status: number;
+  iat?: number;
+  exp?: number;
 }

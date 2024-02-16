@@ -10,14 +10,16 @@ import { ValidarLoginMiddleware } from './middlewares/validar-login.middleware';
 @Module({
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, JwtStrategy],
-  imports: [UsuariosModule, JwtModule.register({
-    secret: process.env.JWT_SECRET,
-    signOptions: {
-      expiresIn: '1d',
-    }
-  })]
+  imports: [
+    UsuariosModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: {
+        expiresIn: '1d',
+      },
+    }),
+  ],
 })
-
 export class AuthModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(ValidarLoginMiddleware).forRoutes('login');

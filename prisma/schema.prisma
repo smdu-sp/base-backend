@@ -17,21 +17,17 @@ enum Permissao {
   USR
 }
 
-enum Status {
-  ATIVO
-  INATIVO
-}
-
 model Usuario {
   id            String      @id @default(uuid())
   nome          String
   login         String      @unique
+  email         String      @unique
   permissao     Permissao   @default(USR)
-  status        Status      @default(ATIVO)
+  status        Int         @default(1)
 
   ultimologin   DateTime    @default(now())
   criadoEm      DateTime    @default(now())
-  atualizadoEm  DateTime    @updatedAt
+  atualizadoEm  DateTime    @default(now()) @updatedAt
 
   @@map("usuarios")
 }

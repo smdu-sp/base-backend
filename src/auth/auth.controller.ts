@@ -1,4 +1,12 @@
-import { Controller, HttpCode, HttpStatus, Post, UseGuards, Request, Get } from '@nestjs/common';
+import {
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseGuards,
+  Request,
+  Get,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { AuthRequest } from './models/AuthRequest';
@@ -17,7 +25,7 @@ export class AuthController {
   login(@Request() req: AuthRequest) {
     return this.authService.login(req.user);
   }
-  
+
   @Get('eu')
   usuarioAtual(@UsuarioAtual() usuario: Usuario) {
     return usuario;

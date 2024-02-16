@@ -11,12 +11,16 @@ import { PrismaModule } from './prisma/prisma.module';
 @Module({
   imports: [UsuariosModule, AuthModule, PrismaModule],
   controllers: [AppController],
-  providers: [AppService, {
-    provide: APP_GUARD,
-    useClass: JwtAuthGuard
-  }, {
-    provide: APP_GUARD,
-    useClass: RoleGuard
-  }],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RoleGuard,
+    },
+  ],
 })
 export class AppModule {}
