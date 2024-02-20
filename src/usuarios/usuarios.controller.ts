@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
@@ -29,8 +30,13 @@ export class UsuariosController {
 
   @Permissoes('SUP', 'ADM')
   @Get('buscar-tudo') //localhost:3000/usuarios/buscar-tudo
-  buscarTudo() {
-    return this.usuariosService.buscarTudo();
+  buscarTudo(
+    @Query('pagina') pagina?: string,
+    @Query('limite') limite?: string,
+    @Query('status') status?: string,
+    @Query('busca') busca?: string,
+  ) {
+    return this.usuariosService.buscarTudo(+pagina, +limite, +status, busca);
   }
 
   @Permissoes('SUP', 'ADM')
@@ -53,5 +59,16 @@ export class UsuariosController {
   @Delete('excluir/:id') //localhost:3000/usuarios/excluir/id
   excluir(@Param('id') id: string) {
     return this.usuariosService.excluir(id);
+  }
+
+  @Permissoes('SUP', 'ADM')
+  @Patch('autorizar/:id')
+  autorizarUsuario(@Param('id') id: string) {
+    return this.usuariosService.autorizaUsuario(id);
+  }
+
+  @Get('valida-usuario')
+  validaUsuario(@UsuarioAtual() usuario: Usuario) {
+    return this.usuariosService.validaUsuario(usuario.id);
   }
 }
