@@ -192,12 +192,6 @@ export class UsuariosService {
       const usuarioReativado = await this.prisma.usuario.update({ where: { id: usuarioExiste.id }, data: { status: 1 } });
       return usuarioReativado;
     }
-    const rf = login.substring(1);
-    const usuario_sgu = await this.prisma2.tblUsuarios.findFirst({
-      where: {
-        cpRF: { startsWith: rf },
-      }
-    });
     const client: Client = createClient({
       url: process.env.LDAP_SERVER,
     });

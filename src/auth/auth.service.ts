@@ -5,6 +5,7 @@ import { UsuarioPayload } from './models/UsuarioPayload';
 import { JwtService } from '@nestjs/jwt';
 import { UsuarioToken } from './models/UsuarioToken';
 import { Client, createClient } from 'ldapjs';
+import { UsuarioJwt } from './models/UsuarioJwt';
 
 @Injectable()
 export class AuthService {
@@ -13,17 +14,28 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  login(usuario: Usuario): UsuarioToken {
-    const payload: UsuarioPayload = {
-      sub: usuario.id,
-      nome: usuario.nome,
-      login: usuario.login,
-      email: usuario.email,
-      permissao: usuario.permissao,
-      status: usuario.status,
-    };
-    const access_token = this.jwtService.sign(payload);
-    return { access_token };
+  async login(usuario: Usuario): Promise<UsuarioToken> {
+    const { access_token, refresh_token } = await this.getTokens(usuario);
+    return { access_token, refresh_token };
+  }
+
+  async refresh(usuario: Usuario) {
+    const { access_token, refresh_token } = await this.getTokens(usuario);
+    return { access_token, refresh_token };
+  }
+
+  async getTokens(usuario: UsuarioJwt) {
+    const { id, login, nome, email, permissao, status } = usuario;
+    const payload: UsuarioPayload = { sub: id, login, nome, email, permissao, status };
+    const access_token = await this.jwtService.signAsync(payload, {
+      expiresIn: '15m',
+      secret: process.env.JWT_SECRET,
+    });
+    const refresh_token = await this.jwtService.signAsync(payload, {
+      expiresIn: '7d',
+      secret: process.env.RT_SECRET,
+    });
+    return { access_token, refresh_token };
   }
 
   async validateUser(login: string, senha: string) {
@@ -41,7 +53,7 @@ export class AuthService {
       url: process.env.LDAP_SERVER,
     });
     await new Promise<void>((resolve, reject) => {
-      client.bind(`${login}${process.env.LDAP_DOMAIN}`, senha, (err) => {
+      client.bind(`${login}${process.env.LDAP_DOMAIN}`, senha, (err: any) => {
         if (err) {
           client.destroy();
           reject(new UnauthorizedException('Credenciais incorretas.'));
@@ -64,16 +76,11 @@ export class AuthService {
               reject();
             }
             res.on('searchEntry', async (entry) => {
-              const nome = JSON.stringify(
-                entry.pojo.attributes[0].values[0],
-              ).replaceAll('"', '');
-              const email = JSON.stringify(
-                entry.pojo.attributes[1].values[0],
-              ).replaceAll('"', '');
+              const { name, mail } = Object.fromEntries(entry.pojo.attributes.map(({ type, values }) => [type, values[0]]));
               const novoUsuario = await this.usuariosService.criar({
-                nome,
+                nome: name,
                 login,
-                email,
+                email: mail,
                 permissao: 'USR',
                 status: 1,
               });
