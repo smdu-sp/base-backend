@@ -28,7 +28,7 @@ export class UsuariosController {
     return this.usuariosService.criar(createUsuarioDto, usuario);
   }
 
-  @Permissoes('ADM')
+  @Permissoes('ADM', 'SUP')
   @Get('buscar-tudo') //localhost:3000/usuarios/buscar-tudo
   buscarTudo(
     @UsuarioAtual() usuario: Usuario,
@@ -41,13 +41,13 @@ export class UsuariosController {
     return this.usuariosService.buscarTudo(usuario, +pagina, +limite, +status, busca, permissao);
   }
 
-  @Permissoes('ADM')
+  @Permissoes('ADM', 'SUP')
   @Get('buscar-por-id/:id') //localhost:3000/usuarios/buscar-por-id/id
   buscarPorId(@Param('id') id: string) {
     return this.usuariosService.buscarPorId(id);
   }
 
-  @Permissoes('ADM', 'TEC', 'USR')
+  @Permissoes('ADM', 'SUP', 'USR')
   @Patch('atualizar/:id') //localhost:3000/usuarios/atualizar/id
   atualizar(
     @UsuarioAtual() usuario: Usuario,
@@ -57,19 +57,19 @@ export class UsuariosController {
     return this.usuariosService.atualizar(usuario, id, updateUsuarioDto);
   }
 
-  @Permissoes('ADM', 'TEC')
+  @Permissoes('ADM', 'SUP')
   @Get('lista-completa')
   listaCompleta() {
     return this.usuariosService.listaCompleta();
   }
 
-  @Permissoes('ADM')
+  @Permissoes('ADM', 'SUP')
   @Delete('desativar/:id') //localhost:3000/usuarios/excluir/id
   excluir(@Param('id') id: string) {
     return this.usuariosService.excluir(id);
   }
 
-  @Permissoes('ADM')
+  @Permissoes('ADM', 'SUP')
   @Patch('autorizar/:id')
   autorizarUsuario(@Param('id') id: string) {
     return this.usuariosService.autorizaUsuario(id);
@@ -80,7 +80,7 @@ export class UsuariosController {
     return this.usuariosService.validaUsuario(usuario.id);
   }
 
-  @Permissoes('ADM')
+  @Permissoes('ADM', 'SUP')
   @Get('buscar-novo')
   buscarNovo(@Query('login') login: string) {
     return this.usuariosService.buscarNovo(login);
