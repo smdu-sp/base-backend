@@ -17,45 +17,44 @@ Base de desenvolvimento backend de SMUL/ATIC:
 ## Instalação
 
 ```bash
-$ npm install
+npm install
 ```
 
 
 ## Criando o arquivo .env
 
 ```bash
-$ copy example.env .env
+copy example.env .env
 ```
 
 ```bash
-$ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
 Copie o código gerado para o campo JWT_SECRET no arquivo .env
 
 ```bash
-$ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
 Copie o código gerado para o campo RT_SECRET no arquivo .env
 
 ## Configurando o banco de dados
 
-Após a configuração do arquivo .env, você deverá executar os comandos para iniciar o banco de dados no prisma.
-
-
-```bash
-$ npx prisma migrate dev
-```
-
-```bash
-$ npx prisma generate --schema=prisma2/schema.prisma
-```
-
 No arquivo 'prisma/seed.ts' substitua as informações por suas informações de usuário. E então execute:
 
 ```bash
-$ npx prisma db seed
+npx prisma db seed
+```
+
+Após a configuração do arquivo .env, você deverá executar os comandos para iniciar o banco de dados no prisma.
+
+```bash
+npx prisma migrate dev
+```
+
+```bash
+npx prisma generate --schema=prisma2/schema.prisma
 ```
 
 ## Rodando a aplicação
@@ -64,13 +63,13 @@ Por padrão, a aplicação rodará na porta 3000.
 
 ```bash
 # atualiza a cada mudança nos arquivos
-$ npm run dev
+npm run dev
 ```
 ```bash
 # modo de desenvolvimento
-$ npm run start
+npm run start
 ```
 ```bash
 # modo de produção
-$ npm run prod
+npm run prod
 ```
