@@ -44,17 +44,15 @@ Copie o código gerado para o campo RT_SECRET no arquivo .env
 No arquivo 'prisma/seed.ts' substitua as informações por suas informações de usuário. E então execute:
 
 ```bash
-npx prisma db seed
-```
-
-Após a configuração do arquivo .env, você deverá executar os comandos para iniciar o banco de dados no prisma.
-
-```bash
 npx prisma migrate dev
 ```
 
 ```bash
 npx prisma generate --schema=prisma2/schema.prisma
+```
+
+```bash
+npx prisma db seed
 ```
 
 ## Rodando a aplicação
