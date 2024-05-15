@@ -20,17 +20,42 @@ Base de desenvolvimento backend de SMUL/ATIC:
 $ npm install
 ```
 
-## Configurando o banco de dados
 
-O arquivo example.env detalha as variáveis de ambiente necessárias pra rodar a aplicação, a partir dela é necessário criar um arquivo .env com as informações corretas (URL do banco de dados, etc).
-
-<b>NUNCA ENVIE O ARQUIVO .env PARA O REPOSITÓRIO.</b>
-
-node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+## Criando o arquivo .env
 
 ```bash
-# cria arquivo .env com base no exemplo
 $ copy example.env .env
+```
+
+```bash
+$ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+Copie o código gerado para o campo JWT_SECRET no arquivo .env
+
+```bash
+$ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+Copie o código gerado para o campo RT_SECRET no arquivo .env
+
+## Configurando o banco de dados
+
+Após a configuração do arquivo .env, você deverá executar os comandos para iniciar o banco de dados no prisma.
+
+
+```bash
+$ npx prisma migrate dev
+```
+
+```bash
+$ npx prisma generate --schema=prisma2/schema.prisma
+```
+
+No arquivo 'prisma/seed.ts' substitua as informações por suas informações de usuário. E então execute:
+
+```bash
+$ npx prisma db seed
 ```
 
 ## Rodando a aplicação
