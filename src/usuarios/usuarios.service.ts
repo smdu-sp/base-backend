@@ -30,8 +30,18 @@ export class UsuariosService {
   async listaCompleta() {
     const lista = await this.prisma.usuario.findMany({
       orderBy: { nome: 'asc' },
+      select: {
+        id: true,
+        nome: true,
+        login: true,
+        email: true,
+        permissao: true,
+        status: true,
+      },
     });
-    if (!lista || lista.length == 0) throw new ForbiddenException('Nenhum usuário encontrado.');
+    if (!lista || lista.length === 0) {
+      throw new ForbiddenException('Nenhum usuário encontrado.');
+    }
     return lista;
   }
 
@@ -68,9 +78,9 @@ export class UsuariosService {
         );
     }
     const usuario = await this.prisma.usuario.create({
-      data: { 
-        ...createUsuarioDto
-      }
+      data: {
+        ...createUsuarioDto,
+      },
     });
     if (!usuario)
       throw new InternalServerErrorException(
@@ -90,14 +100,18 @@ export class UsuariosService {
   ) {
     [pagina, limite] = this.app.verificaPagina(pagina, limite);
     const searchParams = {
-      ...(busca && { OR: [
-        { nome: { contains: busca } },
-        { login: { contains: busca } },
-        { email: { contains: busca } },
-      ]}),
+      ...(busca && {
+        OR: [
+          { nome: { contains: busca } },
+          { login: { contains: busca } },
+          { email: { contains: busca } },
+        ],
+      }),
       ...(unidade_id !== '' && { unidade_id }),
       ...(permissao !== '' && { permissao: $Enums.Permissao[permissao] }),
-      ...(usuario.permissao !== 'DEV' ? { status: 1 } : (status !== 4 && { status })),
+      ...(usuario.permissao !== 'DEV'
+        ? { status: 1 }
+        : status !== 4 && { status }),
     };
     const total = await this.prisma.usuario.count({ where: searchParams });
     if (total == 0) return { total: 0, pagina: 0, limite: 0, users: [] };
@@ -140,8 +154,14 @@ export class UsuariosService {
     updateUsuarioDto: UpdateUsuarioDto,
   ) {
     const usuarioLogado = await this.buscarPorId(usuario.id);
-    if (!usuarioLogado || ['TEC', 'USR'].includes(usuarioLogado.permissao) && id !== usuarioLogado.id)
-      throw new ForbiddenException('Operação não autorizada para este usuário.')
+    if (
+      !usuarioLogado ||
+      (['TEC', 'USR'].includes(usuarioLogado.permissao) &&
+        id !== usuarioLogado.id)
+    )
+      throw new ForbiddenException(
+        'Operação não autorizada para este usuário.',
+      );
     if (updateUsuarioDto.login) {
       const usuario = await this.buscarPorLogin(updateUsuarioDto.login);
       if (usuario && usuario.id !== id)
@@ -179,32 +199,40 @@ export class UsuariosService {
   }
 
   async validaUsuario(id: string) {
-    const usuario = await this.prisma.usuario.findUnique({ where: { id }});
+    const usuario = await this.prisma.usuario.findUnique({ where: { id } });
     if (!usuario) throw new ForbiddenException('Usuário não encontrado.');
     if (usuario.status !== 1) throw new ForbiddenException('Usuário inativo.');
     return usuario;
   }
 
-  async buscarNovo(login: string){
+  async buscarNovo(login: string) {
     const usuarioExiste = await this.buscarPorLogin(login);
-    if (usuarioExiste && usuarioExiste.status === 1) throw new ForbiddenException('Login já cadastrado.');
-    if (usuarioExiste && usuarioExiste.status !== 1){
-      const usuarioReativado = await this.prisma.usuario.update({ where: { id: usuarioExiste.id }, data: { status: 1 } });
+    if (usuarioExiste && usuarioExiste.status === 1)
+      throw new ForbiddenException('Login já cadastrado.');
+    if (usuarioExiste && usuarioExiste.status !== 1) {
+      const usuarioReativado = await this.prisma.usuario.update({
+        where: { id: usuarioExiste.id },
+        data: { status: 1 },
+      });
       return usuarioReativado;
     }
     const client: Client = createClient({
       url: process.env.LDAP_SERVER,
     });
     await new Promise<void>((resolve, reject) => {
-      client.bind(`${process.env.USER_LDAP}${process.env.LDAP_DOMAIN}`, process.env.PASS_LDAP, (err) => {
-        if (err) {
-          client.destroy();
-          reject(new UnauthorizedException('Credenciais incorretas 2.'));
-        }
-        resolve();
-      });
+      client.bind(
+        `${process.env.USER_LDAP}${process.env.LDAP_DOMAIN}`,
+        process.env.PASS_LDAP,
+        (err) => {
+          if (err) {
+            client.destroy();
+            reject(new UnauthorizedException('Credenciais incorretas 2.'));
+          }
+          resolve();
+        },
+      );
     });
-    const usuario_ldap = await new Promise<any>((resolve, reject) => {
+    const usuario_ldap = await new Promise<any>((resolve, _reject) => {
       client.search(
         process.env.LDAP_BASE,
         {
@@ -221,12 +249,12 @@ export class UsuariosService {
             const nome = JSON.stringify(
               entry.pojo.attributes[0].values[0],
             ).replaceAll('"', '');
-            const email = JSON.stringify(
-              entry.pojo.attributes[1].values[0],
-            ).replaceAll('"', '').toLowerCase();
+            const email = JSON.stringify(entry.pojo.attributes[1].values[0])
+              .replaceAll('"', '')
+              .toLowerCase();
             resolve({ nome, email });
           });
-          res.on('error', (err) => {
+          res.on('error', (_err) => {
             client.destroy();
             resolve('erro');
           });
@@ -238,11 +266,12 @@ export class UsuariosService {
       );
     });
     client.destroy();
-    if (!usuario_ldap.email) throw new UnauthorizedException('Credenciais incorretas.');
+    if (!usuario_ldap.email)
+      throw new UnauthorizedException('Credenciais incorretas.');
     return {
       login,
       nome: usuario_ldap.nome,
-      email: usuario_ldap.email
+      email: usuario_ldap.email,
     };
   }
 }

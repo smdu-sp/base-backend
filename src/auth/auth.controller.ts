@@ -3,9 +3,10 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Body,
   UseGuards,
-  Request,
   Get,
+  Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
@@ -14,7 +15,10 @@ import { IsPublic } from './decorators/is-public.decorator';
 import { UsuarioAtual } from './decorators/usuario-atual.decorator';
 import { Usuario } from '@prisma/client';
 import { RefreshAuthGuard } from './guards/refresh.guard';
+import { LoginDto } from './dto/login.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('autenticação e autorização')
 @Controller()
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -23,7 +27,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
   @IsPublic()
-  login(@Request() req: AuthRequest) {
+  login(@Req() req: AuthRequest, @Body() _loginDto: LoginDto) {
     return this.authService.login(req.user);
   }
 
@@ -35,6 +39,7 @@ export class AuthController {
   }
 
   @Get('eu')
+  @IsPublic()
   usuarioAtual(@UsuarioAtual() usuario: Usuario) {
     return usuario;
   }
