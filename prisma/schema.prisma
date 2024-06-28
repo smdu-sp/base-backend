@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -18,16 +18,16 @@ enum Permissao {
 }
 
 model Usuario {
-  id            String      @id @default(uuid())
-  nome          String
-  login         String      @unique
-  email         String      @unique
-  permissao     Permissao   @default(USR)
-  status        Int         @default(1)
+  id        String    @id @default(uuid())
+  nome      String
+  login     String    @unique
+  email     String    @unique
+  permissao Permissao @default(USR)
+  status    Int       @default(1)
 
-  ultimologin   DateTime    @default(now())
-  criadoEm      DateTime    @default(now())
-  atualizadoEm  DateTime    @default(now()) @updatedAt
+  ultimoLogin  DateTime @default(now())
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @default(now()) @updatedAt
 
   @@map("usuarios")
 }

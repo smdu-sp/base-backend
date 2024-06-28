@@ -26,7 +26,14 @@ export class AuthService {
 
   async getTokens(usuario: UsuarioJwt) {
     const { id, login, nome, email, permissao, status } = usuario;
-    const payload: UsuarioPayload = { sub: id, login, nome, email, permissao, status };
+    const payload: UsuarioPayload = {
+      sub: id,
+      login,
+      nome,
+      email,
+      permissao,
+      status,
+    };
     const access_token = await this.jwtService.signAsync(payload, {
       expiresIn: '15m',
       secret: process.env.JWT_SECRET,
@@ -76,7 +83,12 @@ export class AuthService {
               reject();
             }
             res.on('searchEntry', async (entry) => {
-              const { name, mail } = Object.fromEntries(entry.pojo.attributes.map(({ type, values }) => [type, values[0]]));
+              const { name, mail } = Object.fromEntries(
+                entry.pojo.attributes.map(({ type, values }) => [
+                  type,
+                  values[0],
+                ]),
+              );
               const novoUsuario = await this.usuariosService.criar({
                 nome: name,
                 login,
