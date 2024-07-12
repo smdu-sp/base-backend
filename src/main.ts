@@ -22,10 +22,10 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   await app.listen(3000);
+
   const server = createServer();
   server.listen(1389, () => {
     console.log('LDAP server listening at %s', server.url);
   });
 }
-
 bootstrap();
