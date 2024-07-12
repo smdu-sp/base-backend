@@ -1,0 +1,30 @@
+//Tabela prevendo ETL contínuo da API Geosampa
+model ApiGeosampa {
+    id         Int                                   @id @default(autoincrement())
+    geoLatLong Unsupported("geography(Point, 4326)") //Verificar EPSG Geosampa EPSG 31983 - SIRGAS 2000 (UTM Zones)
+}
+
+//Tabela prevendo a adição do mapa colaborativo no sistema
+model Denuncia {
+    id                  Int                                   @id @default(autoincrement())
+    protocoloAnonimo    String                                @db.Uuid
+    geoLatLong          Unsupported("geography(Point, 4326)") //Verificar biblioteca/API frontend EPSG 31983 - SIRGAS 2000 (UTM Zones)
+    geoEpsg             Int?
+    enderecoLogradouro  String?                               @db.VarChar(256)
+    enderecoNumero      String?                               @db.VarChar(7)
+    enderecoComplemento String?                               @db.VarChar(64)
+    enderecoReferencia  String?                               @db.VarChar(256)
+    enderecoDistrito    EnderecoDistrito?
+    enderecoZona        EnderecoZona?
+    enderecoCEP         Int?
+    descricao           String?                               @db.Text
+    periodoInutilizado  PeriodoInutilizado?
+    estadoConstruido    EstadoConstruido?
+    autuacaoProcede     Boolean                               @default(false)
+    autuacaoSei         String?                               @db.VarChar
+    criadoEm            DateTime                              @default(now())
+    atualizadoEm        DateTime                              @default(now()) @updatedAt
+    deletado            Boolean                               @default(false)
+
+    @@map("denuncias")
+}

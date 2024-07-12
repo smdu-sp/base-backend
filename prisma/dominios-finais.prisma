@@ -1,0 +1,86 @@
+// O schema foi divido da seguinte maneira:
+// modelo-principal.prisma: Domínios de sistema, usuários, permissões, API, etc.
+// modelo-etapas-iniciais.prisma: Prospecção, Cadastro e Vistoria
+// modelo-etapas-finais.prisma: Notificação, Averbação, Logística, Monitoramento PEUC, Monitoramento IPTU 
+// lista-etapas-iniciais.prisma: Enumeradores de etapas iniciais
+// lista-etapas-finais.prisma: Enumeradores de etapas finais
+
+//Domínio de Notificação: Proprietários; Proprietários_Endereços
+model Endereco {
+    id                  Int        @id @default(autoincrement())
+    proprietarioId      Int        @unique
+    enderecoLogradouro  String?    @db.VarChar(256)
+    enderecoNumero      String?    @db.VarChar(7)
+    enderecoComplemento String?    @db.VarChar(64)
+    enderecoReferencia  String?    @db.VarChar(256)
+    enderecoDistrito    String?    @db.VarChar(64)
+    enderecoMunicipio   Municipio?
+    enderecoEstado      Estado?
+    enderecoPais        Pais?
+    residenteExterior   Boolean?   @default(false)
+    exteriorMunicipio   String?    @db.VarChar(128)
+    exteriorEstado      String?    @db.VarChar(128)
+    enderecoCep         String?    @db.VarChar(10)
+    criadoEm            DateTime   @default(now())
+    atualizadoEm        DateTime   @default(now()) @updatedAt
+    deletado            Boolean    @default(false)
+
+    EnderecoProprietario Proprietario[] //Relação implícita M-M (gerida pelo ORM, sem necessidade de criar tabela de junção)
+
+    @@map("enderecos")
+}
+
+//Domínio de Notificação
+model Matricula {
+    id                   Int      @id @default(autoincrement())
+    imovelId             Int      @unique
+    matriculaNr          String?
+    matriculaDescricao   String?  @db.Text
+    registroNotasEfetivo String?  @db.VarChar(128)
+    criadoEm             DateTime @default(now())
+    atualizadoEm         DateTime @default(now()) @updatedAt
+    deletado             Boolean  @default(false)
+
+    MatriculaImovel       Imovel?        @relation(fields: [imovelId], references: [id])
+    MatriculaProprietario Proprietario[]
+
+    @@map("matriculas")
+}
+
+model Notificacao {
+    id Int @id @default(autoincrement())
+}
+
+model MonitoramentoIptu {
+    id Int @id @default(autoincrement())
+}
+
+model MonitoramentoPeuc {
+    id               Int     @id @default(autoincrement())
+    eObraGrandePorte Boolean
+}
+
+//Domínio de Notificação. TODO: Avaliar modelos para pessoas físicas e jurídicas
+model Proprietario {
+    id                  Int         @id @default(autoincrement())
+    matriculaId         Int         @unique
+    tipoPessoa          TipoPessoa?
+    estadoEspecial      Boolean     @default(false)
+    nomePrimeiro        String?     @db.VarChar(20)
+    nomeMeio            String?     @db.VarChar(20)
+    nomeUltimo          String?     @db.VarChar(40)
+    documentoRg         String?     @db.VarChar(11)
+    documentoCpf        String?     @db.VarChar(11)
+    documentoPassaporte Int?
+    estadoCivil         Int?
+    filiacaoPai         Int?
+    filiacaoMae         Int?
+    criadoEm            DateTime    @default(now())
+    atualizadoEm        DateTime    @default(now()) @updatedAt
+    deletado            Boolean     @default(false)
+
+    ProprietarioMatricula Matricula? @relation(fields: [matriculaId], references: [id])
+    ProprietarioEndereco  Endereco[] //Relação implícita M-M (gerida pelo ORM, sem necessidade de criar tabela de junção)
+
+    @@map("proprietarios")
+}

@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// O schema foi divido da seguinte maneira:
+// modelo-principal.prisma: Domínios de sistema, usuários, permissões, API, etc.
+// modelo-etapas-iniciais.prisma: Prospecção, Cadastro e Vistoria
+// modelo-etapas-finais.prisma: Notificação, Averbação, Logística, Monitoramento PEUC, Monitoramento IPTU 
+// lista-etapas-iniciais.prisma: Enumeradores de etapas iniciais
+// lista-etapas-finais.prisma: Enumeradores de etapas finais
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["prismaSchemaFolder", "postgresqlExtensions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id        String    @id @default(uuid())
+  nome      String
+  login     String    @unique
+  email     String    @unique
+  permissao Permissao @default(USR)
+  status    Int       @default(1)
+
+  ultimologin  DateTime @default(now())
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @default(now()) @updatedAt
+
+  Perfil Perfil?
+
+  @@map("usuarios")
+}
+
+model Perfil {
+  id            Int           @id @default(autoincrement())
+  usuarioId     String        @unique @default(uuid())
+  estadoAtivo   Boolean       @default(true)
+  nomePrimeiro  String?       @db.VarChar(20)
+  nomeMeio      String?       @db.VarChar(20)
+  nomeUltimo    String?       @db.VarChar(40)
+  usuarioLDAP   String?
+  senhaLembrete String?
+  cargo         Cargo?
+  departamento  Departamento?
+  fotoPerfil    String?       @db.VarChar(256)
+  criadoEm      DateTime      @default(now())
+  atualizadoEm  DateTime      @default(now()) @updatedAt
+  deletado      Boolean       @default(false)
+
+  Usuario Usuario @relation(fields: [usuarioId], references: [id])
+
+  @@map("perfis")
+}

@@ -1,0 +1,114 @@
+// O schema foi divido da seguinte maneira:
+// modelo-principal.prisma: Domínios de sistema, usuários, permissões, API, etc.
+// modelo-etapas-iniciais.prisma: Prospecção, Cadastro e Vistoria
+// modelo-etapas-finais.prisma: Notificação, Averbação, Logística, Monitoramento PEUC, Monitoramento IPTU 
+// lista-etapas-iniciais.prisma: Enumeradores de etapas iniciais
+// lista-etapas-finais.prisma: Enumeradores de etapas finais
+
+model Processo {
+    id                  Int                  @id @default(autoincrement())
+    imovelId            Int?
+    vistoriaId          Int?
+    autuacaoSei         String?              @db.VarChar
+    autuacaoData        DateTime?
+    imovelContiguidade  Boolean              @default(false)
+    status              String?              @db.VarChar(20)
+    areaConstruidaTotal Decimal?
+    areaLoteTotal       Decimal?
+    prospeccaoOrigem    ProspeccaoOrigem?
+    prospeccaoTipologia ProspeccaoTipologia?
+    prospeccaoData      DateTime?
+    criadoEm            DateTime             @default(now())
+    atualizadoEm        DateTime             @default(now()) @updatedAt
+    deletado            Boolean              @default(false)
+
+    ProcessoVistoria Vistoria?
+    ProcessoImovel   Imovel[]
+
+    @@map("processos")
+}
+
+model Vistoria {
+    id                            Int            @id @default(autoincrement())
+    processoId                    Int            @unique
+    imovelId                      Int            @unique
+    tipoVistoria                  TipoVistoria?
+    tipoTipologia                 TipoTipologia?
+    tipoUso                       TipoUso?
+    qtdePavimentos                Int?
+    unifamiliar                   Boolean        @default(false)
+    multifamiliar                 Boolean        @default(false)
+    comercio                      Boolean        @default(false)
+    servico                       Boolean        @default(false)
+    industria                     Boolean        @default(false)
+    usoFachadaBoaCondicao         Boolean        @default(false)
+    usoEsquadriaBoaCondicao       Boolean        @default(false)
+    usoPodaVegetacao              Boolean        @default(false)
+    areaConstruidaTotalConstatada Decimal?
+    areaLoteTotalConstatada       Decimal?
+    indiceOcupacaoConstatado      Decimal?
+    areaCoberturaTotalConstatada  Decimal?
+    areaConstruidaNaoComputavel   Decimal?
+    descricao                     String?        @db.Text
+    dataVistoria                  DateTime?
+    criadoEm                      DateTime       @default(now())
+    atualizadoEm                  DateTime       @default(now()) @updatedAt
+    deletado                      Boolean        @default(false)
+
+    VistoriaProcesso Processo @relation(fields: [processoId], references: [id])
+    VistoriaImovel   Imovel?
+
+    @@map("vistorias")
+}
+
+model Prospeccao {
+    id Int @id @default(autoincrement())
+
+    @@map("prospeccoes")
+}
+
+model Imovel {
+    id                                  Int                                   @id @default(autoincrement())
+    matriculaId                         Int                                   @unique
+    vistoriaId                          Int                                   @unique
+    processoId                          Int                                   @unique
+    sqlSetor                            Int?
+    sqlQuadra                           Int?
+    sqlLote                             Int?
+    sqlDigito                           Int?
+    sqlPai                              Int?
+    sqlFilho                            Int?
+    registroNotasReferencia             String?                               @db.VarChar(128)
+    enderecoLogradouro                  String?                               @db.VarChar(256)
+    enderecoNumero                      String?                               @db.VarChar(7)
+    enderecoComplemento                 String?                               @db.VarChar(64)
+    enderecoReferencia                  String?                               @db.VarChar(256)
+    enderecoDistrito                    EnderecoDistrito?
+    enderecoCep                         String?                               @db.VarChar(7)
+    enderecoSubprefeitura               EnderecoSubprefeitura?
+    enderecoSubprefeituraSigla          EnderecoSubprefeituraSigla?
+    enderecoMacroarea                   EnderecoMacroarea?
+    enderecoMacroareaSigla              EnderecoMacroAreaSigla?
+    enderecoZona                        EnderecoZona?
+    enderecoZonaSigla                   EnderecoZonaSigla?
+    areaConstruidaTotalRegistrada       Decimal?
+    areaLoteTotalRegistrada             Decimal?
+    areaCoeficienteAproveitamento       Decimal?
+    areaCoeficienteAproveitamentoMinimo Decimal?
+    geoLatLong                          Unsupported("geography(Point, 4326)") //Verificar EPSG Geosampa EPSG 31983 - SIRGAS 2000 (UTM Zones)
+    geoEpsg                             Int?
+    decretoNumero                       String?
+    decretoTipo                         String?
+    tombamentoCompresp                  String?
+    tombamentoCondephat                 String?
+    tombamentoIphan                     String?
+    criadoEm                            DateTime                              @default(now())
+    atualizadoEm                        DateTime                              @default(now()) @updatedAt
+    deletado                            Boolean                               @default(false)
+
+    ImovelProcesso  Processo    @relation(fields: [processoId], references: [id])
+    ImovelVistoria  Vistoria?   @relation(fields: [vistoriaId], references: [id])
+    ImovelMatricula Matricula[]
+
+    @@map("imoveis")
+}

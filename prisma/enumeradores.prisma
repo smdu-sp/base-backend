@@ -1,0 +1,145 @@
+// Domnínio de Sistema: Tabela Usuário
+enum Permissao {
+    DEV
+    SUP
+    ADM
+    USR
+}
+
+// Domnínio Sistema: Tabela Perfil
+enum Cargo {
+    coordenador
+    diretor
+    tecnico
+    auxAdm
+    estagiario
+    outro
+}
+
+// Domnínio Sistema: Tabela Perfil
+enum Departamento {
+    dcit
+    dvf
+    ddoc
+    adm
+}
+
+// Domínio Inicial: Tabela Imóvel
+enum EnderecoDistrito {
+    centro
+    norte
+    sul
+    leste
+    oeste
+}
+
+// Domínio Inicial: Tabela Imóvel
+enum EnderecoSubprefeitura {
+    tatuape
+}
+
+// Domínio Inicial: Tabela Imóvel
+enum EnderecoSubprefeituraSigla {
+    tat
+}
+
+// Domínio Inicial: Tabela Imóvel
+enum EnderecoMacroarea {
+    centro
+}
+
+// Domínio Inicial: Tabela Imóvel
+enum EnderecoMacroAreaSigla {
+    cen
+}
+
+// Domínio Inicial: Tabela Imóvel
+enum EnderecoZona {
+    centro
+}
+
+// Domínio Inicial: Tabela Imóvel
+enum EnderecoZonaSigla {
+    cen
+}
+
+//Domínio Geoespacial: Tabela Denúncia
+enum EstadoConstruido {
+    possuiConstrucao
+    construcaoUtilizada
+    anuncioLocacaoVenda
+    esquadriaLacrada
+    presencaLixo
+}
+
+//Domínio Geoespacial: Tabela Denúncia
+enum PeriodoInutilizado {
+    menosUmAno
+    entreUmECincoAnos
+    entreCincoEDezAnos
+    maisDeDezAnos
+}
+
+//Domínio Inicial: Tabela Processo
+enum ProspeccaoOrigem {
+    mapaColaborativo
+    outros
+}
+
+//Domínio Inicial: Tabela Processo
+enum ProspeccaoTipologia {
+    residencial
+    comercial
+    industrial
+    misto
+    outros
+}
+
+// Domínio Final: Notificações
+enum TipoPessoa {
+    PF
+    PJ
+}
+
+// Domínio Inicial: Tabela Vistorias
+enum TipoVistoria {
+    presencial
+    remota
+}
+
+// Domínio Inicial: Vistorias
+enum TipoTipologia {
+    naoEdificado
+    naoUtilizado
+    subutilizado
+}
+
+// Domínio Inicial: Vistorias
+enum TipoUso {
+    residencial
+    misto
+    naoResidencial
+}
+
+// TODO: Avaliar métodos para que esse enum seja convertido em modelos de endereços
+// Prioridade: Baixa, não afeta o funcionamento da aplicação
+// Divisão Territorial Brasileira, IBGE, 2022: https://www.ibge.gov.br/geociencias/organizacao-do-territorio/estrutura-territorial/23701-divisao-territorial-brasileira.html?=&t=downloads
+// Países oficialmente reconhecidos, Fonte?, Ano?:
+
+// Domínio Final: Tabela Endereço dos Proprietários
+enum Pais {
+    brasil
+    inglaterra
+}
+
+// Domínio Final: Tabela Endereço dos Proprietários
+enum Estado {
+    saoPaulo
+    bahia
+}
+
+// Domínio Final: Tabela Endereço dos Proprietários
+enum Municipio {
+    saoPaulo
+    salvador
+}
